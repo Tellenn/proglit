@@ -1,0 +1,38 @@
+---
+title: "TD5perso"
+author: "Perrin Kyllian"
+date: "28 février 2017"
+output: html_document
+---
+```{R}
+library(readr);
+library(magrittr);
+library(ggplot2);
+library(dplyr);
+```
+
+```{R}
+df <- read_tsv("dpt2015.txt", locale = locale(encoding = "ISO-8859-1"));
+```
+ 
+```{R}
+df
+```
+ 
+```{R}
+df %>%filter(preusuel == "ALEXANDRE" & dpt == "38" & sexe == "1")%>%
+      select(nombre, annais) %>%
+      arrange(-nombre)
+      
+
+ 
+```
+
+```{R}
+pop = sum(df$nombre);
+df %>% select(preusuel, nombre) %>% group_by(preusuel)%>% summarize(nombrep = sum(nombre))%>% mutate(taux = nombrep/pop*100)
+```
+
+```{R}
+
+```
