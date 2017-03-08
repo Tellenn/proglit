@@ -34,5 +34,17 @@ df %>% select(preusuel, nombre) %>% group_by(preusuel)%>% summarize(nombrep = su
 ```
 
 ```{R}
+kyll = df %>% filter(preusuel == "KYLLIAN") %>% group_by(dpt)%>% summarize(nb = sum(nombre)) %>% select (dpt,nb)
+kyll
+```
 
+
+```{R}
+ggplot(data=kyll, aes(x=dpt, y=nb))+
+geom_line()+
+geom_point() +
+xlab("Département") +
+theme_bw() +
+ylab("Nombre d'occurence");
+  
 ```
