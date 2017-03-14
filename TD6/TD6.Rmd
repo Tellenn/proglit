@@ -36,7 +36,8 @@ experiment <- function (faces = 6, n = 100){
 ```
 
 ```{r}
-rolls <- experiment(6,50000);
+N=50000
+rolls <- experiment(6,N);
 result <- rolls %>% mutate(Sum = Dice1+Dice2+Dice3);
 final <- result %>% group_by(Sum) %>% summarize(nbocc=n());
 final
@@ -51,11 +52,14 @@ theme_bw();
 ```
 
 ```{r}
-
+Echant = final %>% mutate(freq = nbocc/N) %>% mutate(var= freq*(1-freq)) %>% mutate(error = (qnorm(0.95)*sqrt(var))/sqrt(N));
+Echant
 ```
 
 ```{r}
-
+ggplot(data=Echant, aes(x=freq, y=Sum,xmin = freq-error, xmax= freq+error))+
+  geom_errorbarh()+
+  theme_bw()
 ```
 
 ```{r}
