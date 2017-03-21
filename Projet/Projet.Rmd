@@ -5,6 +5,23 @@ date: "21 mars 2017"
 output: pdf_document
 ---
 
+TODO :The R Markdown (to be written in RStudio) must contain:
+
+Frontpage
+  Title
+  Student's name
+Table of contents
+Introduction
+  Context / Dataset description
+    How the dataset has been obtained?
+  Description of the question
+Methodology
+  Data clean-up procedures
+  Scientific workflow
+  Data representation choices
+Analysis in Literate Programming
+Conclusion
+References
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(readr);
@@ -16,9 +33,22 @@ Choix d'une table de donnée avec 3 questions. CHaque table doit être different d
 IL faudras écrire les question sur un README_PROJET.md
 Une difficultée croissant est appréciée
 Méthodologie a faire.
-Choix : https://www.kaggle.com/mcdonalds/nutrition-facts ?
+Choix : Population des 16 ans ou plus selon le niveau de diplôme, le sexe et l'âge de 1968 à 2013 
+https://www.insee.fr/fr/statistiques/1893149
 Présentation la semaine après les examens.
+
+```{r}
+pop75 <- read.csv(file="pop-dip-75.csv", header=TRUE, sep=";");
+pop82 <- read.csv(file="pop-dip-82.csv", header=TRUE, sep=";");
+pop90 <- read.csv(file="pop-dip-90.csv", header=TRUE, sep=";");
+pop99 <- read.csv(file="pop-dip-99.csv", header=TRUE, sep=";");
+pop08 <- read.csv(file="pop-dip-08.csv", header=TRUE, sep=";");
+pop13 <- read.csv(file="pop-dip-13.csv", header=TRUE, sep=";");
+data <- rbind(pop75 %>% mutate(annee = 1975),rbind(rbind(rbind(rbind( pop08 %>% mutate(annee = 2008),pop13 %>% mutate(annee = 2013)),pop99 %>% mutate(annee = 1999)),pop90 %>% mutate(annee = 1990)),pop82 %>% mutate(annee = 1982) ))
+data
+```
 
 ```{r}
 
 ```
+
