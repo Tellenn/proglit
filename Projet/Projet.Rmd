@@ -1,0 +1,14 @@
+---
+title: "Projet"
+author: "Perrin Kyllian / Trouvin Paul"
+date: "21 mars 2017"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(readr);
+library(magrittr);
+library(ggplot2);
+library(dplyr);
+```
