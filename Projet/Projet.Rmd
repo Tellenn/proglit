@@ -12,3 +12,13 @@ library(magrittr);
 library(ggplot2);
 library(dplyr);
 ```
+Choix d'une table de donnée avec 3 questions. CHaque table doit être different d'un groupe a l'autre.
+IL faudras écrire les question sur un README_PROJET.md
+Une difficultée croissant est appréciée
+Méthodologie a faire.
+Choix : https://www.kaggle.com/mcdonalds/nutrition-facts ?
+Présentation la semaine après les examens.
+
+```{r}
+
+```
