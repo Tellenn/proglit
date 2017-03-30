@@ -22,12 +22,15 @@ Methodology
 Analysis in Literate Programming
 Conclusion
 References
+
+Rendu : [L3.MIAGE]TROUVIN PERRIN 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(readr);
 library(magrittr);
 library(ggplot2);
 library(dplyr);
+library(reshape);
 ```
 Choix d'une table de donnée avec 3 questions. CHaque table doit être different d'un groupe a l'autre.
 IL faudras écrire les question sur un README_PROJET.md
@@ -48,7 +51,14 @@ data <- rbind(pop75 %>% mutate(annee = 1975),rbind(rbind(rbind(rbind( pop08 %>% 
 data
 ```
 
-```{r}
+Quel est l'évolution du niveau d'étude des populations en fonction de l'age et du sexe ?
 
+Utilisation de reshape et melt id.vars(definir vecteur des nom des colonne déjà variable) 
+
+```{r}
+temp<-melt(data,id=c("annee","RR15","DR15","LIBELLE15"));
+table<-mutate(temp,sexe = ifelse(variable == "X16_25_H_non_dip",'H',ifelse(variable == "X25_H_non_dip",'H',ifelse(variable == "X16_25_H_bep",'H',ifelse(variable == "X25_H_non_dip",'H',ifelse(variable == "X16_25_H_bac",'H',ifelse(variable == "X25_H_bac",'H',ifelse(variable == "X16_25_H_sup",'H',ifelse(variable == "X25_H_sup",'H','F'))))))))) %>%
+mutate(age = ifelse(variable == "X16_25_H_non_dip","16-25",ifelse(variable == "X16_25_F_non_dip","16-25",ifelse(variable == "X16_25_H_bep","16-25",ifelse(variable == "X16_25_F_non_dip","16-25",ifelse(variable == "X16_25_H_bac","16-25",ifelse(variable == "X16_25_F_bac","16-25",ifelse(variable == "X16_25_H_sup","16-25",ifelse(variable == "X16_25_F_sup","16-25","25+"))))))))) %>%
+mutate(dip = ifelse(variable == "X16_25_H_non_dip","aucun",ifelse(variable == "X25_H_non_dip","aucun",ifelse(variable == "X16_25_F_non_dip","aucun",ifelse(variable == "X25_F_non_dip","aucun",ifelse(variable == "X16_25_H_bep","bac-1",ifelse(variable == "X25_H_bep","bac-1",ifelse(variable == "X16_25_F_sup","bac-1",ifelse(variable == "X25_F_bep","bac-1",ifelse(variable == "X16_25_H_bep","bac",ifelse(variable == "X25_H_bep","bac",ifelse(variable == "X16_25_F_bac","bac",ifelse(variable == "X25_F_bac","bac","bac+"))))))))))))) %>% select(annee,RR15,DR15,LIBELLE15,value,sexe,age,dip)
 ```
 
