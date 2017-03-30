@@ -67,12 +67,18 @@ table %>% filter(dip=="bac")
 tablepays<-select(table,annee,sexe,age,dip,value) %>% group_by(annee,sexe,age,dip) %>% summarise(value=sum(value))
 tablepays
 ```
-Voici la taille des echantillon par année : 
+Evolution de la population par personne: 
 ```{R}
 tableeff <- tablepays %>% group_by(annee,dip)%>% summarize(value=sum(value))
-tableeff  %>% ggplot(aes(x=annee,y=value,colour=dip)) + geom_point()
+tableeff  %>% ggplot(aes(x=annee,y=value,colour=dip)) + geom_point() +geom_line()
 ```
- %>% ggplot(aes(x=annee,y=value,colour=sexe)) + geom_point()
+ Ajout de la distinction homme femme  et de l'age sur ce même graph pour non diplômés
 ```{R}
-mutate(tablepays, tot = select(tableeff,value))
+tablepays %>% filter(dip=="aucun") %>% ggplot(aes(x=annee,y=value,color=sexe,linetype=age, shape=age)) + geom_line() + geom_point()
+```
+
+On remarque grâce à ce graphique le peu de difference dans la variation de l'éducation entre les genres. On remarque également que la population en général a une tendence a s'éduquer de plus en plus. Logiquement, le nombre de diplomés devrait augmenter, nous allons donc examiner cela :
+
+```{R}
+
 ```
