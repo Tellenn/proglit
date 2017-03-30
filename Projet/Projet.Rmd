@@ -54,16 +54,25 @@ Quel est l'évolution du niveau d'étude des populations en fonction de l'age et d
 
 ```{r}
 temp<-melt(data,id=c("annee","RR15","DR15","LIBELLE15"));
-table<-mutate(temp,sexe = ifelse(variable == "X16_25_H_non_dip",'H',ifelse(variable == "X25_H_non_dip",'H',ifelse(variable == "X16_25_H_bep",'H',ifelse(variable == "X25_H_non_dip",'H',ifelse(variable == "X16_25_H_bac",'H',ifelse(variable == "X25_H_bac",'H',ifelse(variable == "X16_25_H_sup",'H',ifelse(variable == "X25_H_sup",'H','F'))))))))) %>%
-mutate(age = ifelse(variable == "X16_25_H_non_dip","16-25",ifelse(variable == "X16_25_F_non_dip","16-25",ifelse(variable == "X16_25_H_bep","16-25",ifelse(variable == "X16_25_F_non_dip","16-25",ifelse(variable == "X16_25_H_bac","16-25",ifelse(variable == "X16_25_F_bac","16-25",ifelse(variable == "X16_25_H_sup","16-25",ifelse(variable == "X16_25_F_sup","16-25","25+"))))))))) %>%
-mutate(dip = ifelse(variable == "X16_25_H_non_dip","aucun",ifelse(variable == "X25_H_non_dip","aucun",ifelse(variable == "X16_25_F_non_dip","aucun",ifelse(variable == "X25_F_non_dip","aucun",ifelse(variable == "X16_25_H_bep","bac-1",ifelse(variable == "X25_H_bep","bac-1",ifelse(variable == "X16_25_F_sup","bac-1",ifelse(variable == "X25_F_bep","bac-1",ifelse(variable == "X16_25_H_bep","bac",ifelse(variable == "X25_H_bep","bac",ifelse(variable == "X16_25_F_bac","bac",ifelse(variable == "X25_F_bac","bac","bac+"))))))))))))) %>% select(annee,RR15,DR15,LIBELLE15,sexe,age,dip,value)
-table
+table<-mutate(temp,sexe = ifelse(variable == "X16_25_H_non_dip",'H',ifelse(variable == "X25_H_non_dip",'H',ifelse(variable == "X16_25_H_bep",'H',ifelse(variable == "X25_H_non_dip",'H',ifelse(variable == "X16_25_H_Bac",'H',ifelse(variable == "X25_H_Bac",'H',ifelse(variable == "X16_25_H_sup",'H',ifelse(variable == "X25_H_sup",'H','F'))))))))) %>%
+mutate(age = ifelse(variable == "X16_25_H_non_dip","16-25",ifelse(variable == "X16_25_F_non_dip","16-25",ifelse(variable == "X16_25_H_bep","16-25",ifelse(variable == "X16_25_F_non_dip","16-25",ifelse(variable == "X16_25_H_Bac","16-25",ifelse(variable == "X16_25_F_Bac","16-25",ifelse(variable == "X16_25_H_sup","16-25",ifelse(variable == "X16_25_F_sup","16-25","25+"))))))))) %>%
+mutate(dip = ifelse(variable == "X16_25_H_non_dip","aucun",ifelse(variable == "X25_H_non_dip","aucun",ifelse(variable == "X16_25_F_non_dip","aucun",ifelse(variable == "X25_F_non_dip","aucun",ifelse(variable == "X16_25_H_bep","bac-1",ifelse(variable == "X25_H_bep","bac-1",ifelse(variable == "X16_25_F_sup","bac-1",ifelse(variable == "X25_F_bep","bac-1",ifelse(variable == "X16_25_H_Bac","bac",ifelse(variable == "X25_H_Bac","bac",ifelse(variable == "X16_25_F_Bac","bac",ifelse(variable == "X25_F_Bac","bac","bac+"))))))))))))) %>% select(annee,RR15,DR15,LIBELLE15,sexe,age,dip,value)
+table %>% filter(dip=="bac")
 ```
 
 
 
 
 ```{R}
-tablepays<-select(table,annee,sexe,age,dip,value) %>% group_by(annee,sexe,age,dip) %>% summarise(value=sum( value))
+tablepays<-select(table,annee,sexe,age,dip,value) %>% group_by(annee,sexe,age,dip) %>% summarise(value=sum(value))
 tablepays
+```
+Voici la taille des echantillon par année : 
+```{R}
+tableeff <- tablepays %>% group_by(annee,dip)%>% summarize(value=sum(value))
+tableeff  %>% ggplot(aes(x=annee,y=value,colour=dip)) + geom_point()
+```
+ %>% ggplot(aes(x=annee,y=value,colour=sexe)) + geom_point()
+```{R}
+mutate(tablepays, tot = select(tableeff,value))
 ```
