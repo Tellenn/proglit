@@ -92,4 +92,19 @@ tablepays %>% filter(dip!="aucun") %>% group_by(annee,sexe,age) %>% summarize(va
 
 ```
 
-Avec ce graph, on peux clairement constater que les femmes ont effectuer un réel progret au cours des années 
+Avec ce graph, on peux clairement constater que les femmes ont effectuer un réel progrès au cours des années. Cependant, nous avons ici un effectif, et nous ne pouvons confirmer donc que le taux des femmes était initialement inférieur et viens ensuite égaler les hommes, nous allons donc comparer les pourcentages par diplome, on ignorera la variable de l'âgge pour ce dernier.
+
+```{R}
+
+tableH<-select(table,annee,DR15,LIBELLE15,sexe,age,dip,value) %>%
+ group_by(annee,age,dip,sexe)
+
+maxH<-sum(tableH$value);
+tableH<-select(tableH,annee,DR15,LIBELLE15,sexe,age,dip,value)%>% mutate(pc=sum(value)/maxH*100)
+temptableH<-select(tableH,sexe,annee,age,dip,pc)%>% group_by(sexe,annee,age,dip,pc)%>% summarize()
+tableFinale<-select(temptableH,sexe,annee,age,dip,pc)%>% group_by(sexe,annee,dip)%>% summarize(pc=sum(pc))
+tableFinale %>% filter(dip!="aucun") %>% group_by(annee,sexe) %>% summarize(pc=sum(pc)) %>% ggplot(aes(x=annee,y=pc,color=sexe)) + geom_line() + geom_point()
+
+```
+
+Donc grâce à ce graphique, nous pouvons clairement remettre en cause notre hypothèse comme quoi les femmes étaient moins diplomées, elle l'étaient initialement plus et n'ont fais que creuser l'écard au fil des années.
