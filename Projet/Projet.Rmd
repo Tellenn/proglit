@@ -32,14 +32,9 @@ library(ggplot2);
 library(dplyr);
 library(reshape);
 ```
-Choix d'une table de donnée avec 3 questions. CHaque table doit être different d'un groupe a l'autre.
-IL faudras écrire les question sur un README_PROJET.md
-Une difficultée croissant est appréciée
-Méthodologie a faire.
-Choix : Population des 16 ans ou plus selon le niveau de diplôme, le sexe et l'âge de 1968 à 2013 
-https://www.insee.fr/fr/statistiques/1893149
-Présentation la semaine après les examens.
+De nos jours, quand on pense a l'éducation et au passé, on pense souvent que la population était moins éduqué ou bien même que les femmes l'étaient moins. Aujourd'hui, à l'aide de donnée de l'insee nous allons vérifier ces informations et essayer de comprendre un peu pourquoi à l'aide de simple conclusion.
 
+Commençons donc par synthétiser les données de differentes années entre 1975 et 2013.
 ```{r}
 pop75 <- read.csv(file="pop-dip-75.csv", header=TRUE, sep=";");
 pop82 <- read.csv(file="pop-dip-82.csv", header=TRUE, sep=";");
@@ -48,37 +43,53 @@ pop99 <- read.csv(file="pop-dip-99.csv", header=TRUE, sep=";");
 pop08 <- read.csv(file="pop-dip-08.csv", header=TRUE, sep=";");
 pop13 <- read.csv(file="pop-dip-13.csv", header=TRUE, sep=";");
 data <- rbind(pop75 %>% mutate(annee = 1975),rbind(rbind(rbind(rbind( pop08 %>% mutate(annee = 2008),pop13 %>% mutate(annee = 2013)),pop99 %>% mutate(annee = 1999)),pop90 %>% mutate(annee = 1990)),pop82 %>% mutate(annee = 1982) ))
-data
 ```
-Quel est l'évolution du niveau d'étude des populations en fonction de l'age et du sexe ?
-
+Nous avons donc un tableau, cependant, ce dernier est assez peu lisible et travaillable, nous allons donc le travailler un peu plus afin qu'il soit clairement lisible.
 ```{r}
 temp<-melt(data,id=c("annee","RR15","DR15","LIBELLE15"));
 table<-mutate(temp,sexe = ifelse(variable == "X16_25_H_non_dip",'H',ifelse(variable == "X25_H_non_dip",'H',ifelse(variable == "X16_25_H_bep",'H',ifelse(variable == "X25_H_non_dip",'H',ifelse(variable == "X16_25_H_Bac",'H',ifelse(variable == "X25_H_Bac",'H',ifelse(variable == "X16_25_H_sup",'H',ifelse(variable == "X25_H_sup",'H','F'))))))))) %>%
 mutate(age = ifelse(variable == "X16_25_H_non_dip","16-25",ifelse(variable == "X16_25_F_non_dip","16-25",ifelse(variable == "X16_25_H_bep","16-25",ifelse(variable == "X16_25_F_non_dip","16-25",ifelse(variable == "X16_25_H_Bac","16-25",ifelse(variable == "X16_25_F_Bac","16-25",ifelse(variable == "X16_25_H_sup","16-25",ifelse(variable == "X16_25_F_sup","16-25","25+"))))))))) %>%
-mutate(dip = ifelse(variable == "X16_25_H_non_dip","aucun",ifelse(variable == "X25_H_non_dip","aucun",ifelse(variable == "X16_25_F_non_dip","aucun",ifelse(variable == "X25_F_non_dip","aucun",ifelse(variable == "X16_25_H_bep","bac-1",ifelse(variable == "X25_H_bep","bac-1",ifelse(variable == "X16_25_F_sup","bac-1",ifelse(variable == "X25_F_bep","bac-1",ifelse(variable == "X16_25_H_Bac","bac",ifelse(variable == "X25_H_Bac","bac",ifelse(variable == "X16_25_F_Bac","bac",ifelse(variable == "X25_F_Bac","bac","bac+"))))))))))))) %>% select(annee,RR15,DR15,LIBELLE15,sexe,age,dip,value)
-table %>% filter(dip=="bac")
+mutate(dip = ifelse(variable == "X16_25_H_non_dip","aucun",ifelse(variable == "X25_H_non_dip","aucun",ifelse(variable == "X16_25_F_non_dip","aucun",ifelse(variable == "X25_F_non_dip","aucun",ifelse(variable == "X16_25_H_bep","bac-1",ifelse(variable == "X25_H_bep","bac-1",ifelse(variable == "X16_25_F_sup","bac-1",ifelse(variable == "X25_F_bep","bac-1",ifelse(variable == "X16_25_H_Bac","bac",ifelse(variable == "X25_H_Bac","bac",ifelse(variable == "X16_25_F_Bac","bac",ifelse(variable == "X25_F_Bac","bac","bac+"))))))))))))) %>% select(annee,DR15,LIBELLE15,sexe,age,dip,value)
 ```
 
-
-
+Nous avons donc desormais nos données et pouvons les travailler. Tout d'abord, parlons des effectifs, concatenons un peu les données pour avoir des données au niveau du pays, qui nous servira a une examination de base.
 
 ```{R}
-tablepays<-select(table,annee,sexe,age,dip,value) %>% group_by(annee,sexe,age,dip) %>% summarise(value=sum(value))
-tablepays
-```
-Evolution de la population par personne: 
-```{R}
+tablepays<-select(table,annee,sexe,age,dip,value) %>% group_by(annee,sexe,age,dip) %>% summarise(value=sum(value));
 tableeff <- tablepays %>% group_by(annee,dip)%>% summarize(value=sum(value))
 tableeff  %>% ggplot(aes(x=annee,y=value,colour=dip)) + geom_point() +geom_line()
 ```
- Ajout de la distinction homme femme  et de l'age sur ce même graph pour non diplômés
+Nous avons déjà ici la confirmation que nous recherchions. Le taux de non diplômés augmente clairement alors que celui des non-diplomés, chute, celà est expliqué grâce au rythme scolaire augmentant, les jeunes se cultivent permettant a la population d'augmenter significativement
+
+Nous avions au début parlé d'une differenciation entre homme et femme, nous allons donc examiner si les non-diplômés varies entre hommes et femmes
 ```{R}
 tablepays %>% filter(dip=="aucun") %>% ggplot(aes(x=annee,y=value,color=sexe,linetype=age, shape=age)) + geom_line() + geom_point()
 ```
 
 On remarque grâce à ce graphique le peu de difference dans la variation de l'éducation entre les genres. On remarque également que la population en général a une tendence a s'éduquer de plus en plus. Logiquement, le nombre de diplomés devrait augmenter, nous allons donc examiner cela :
+Prenons l'examen des gens ayant au moins un BEP
 
 ```{R}
+tableF<-select(table,annee,DR15,LIBELLE15,sexe,age,dip,value) %>% filter(sexe=='F')%>%
+ group_by(annee,age,dip)
+
+maxF<-sum(tableF$value);
+tableF<-select(tableF,annee,DR15,LIBELLE15,sexe,age,dip,value)%>% mutate(pc=sum(value)/maxF*100)
+temptableF<-select(tableF,annee,age,dip,pc)%>% group_by(annee,age,dip,pc)%>% summarize()
+select(temptableF,annee,age,dip,pc)%>% group_by(annee)%>% summarize(pc=sum(pc))
+```
+
+```{R}
+tablepays %>% group_by(annee,sexe,age) %>% summarize(value=sum(value)) %>% ggplot(aes(x=annee,y=value,color=sexe,linetype=age, shape=age)) + geom_line() + geom_point()
 
 ```
+
+On remarque contrairement a nos attente au début que les femmes ont largement plus évoluer quand a l'évolution que les hommes. Et on considérant le graph précédent, on peux donc penser que les femmes sont donc en meilleurs évolution d'éducation, même si elle sont initialement sur un pied égalpour les non-diplomés
+
+```{R}
+tablepays %>% filter(dip!="aucun") %>% group_by(annee,sexe,age) %>% summarize(value=sum(value)) %>% ggplot(aes(x=annee,y=value,color=sexe,linetype=age, shape=age)) + geom_line() + geom_point()
+
+
+```
+
+Avec ce graph, on peux clairement constater que les femmes ont effectuer un réel progret au cours des années 
