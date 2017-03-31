@@ -57,37 +57,24 @@ Nous avons donc desormais nos données et pouvons les travailler. Tout d'abord, p
 ```{R}
 tablepays<-select(table,annee,sexe,age,dip,value) %>% group_by(annee,sexe,age,dip) %>% summarise(value=sum(value));
 tableeff <- tablepays %>% group_by(annee,dip)%>% summarize(value=sum(value))
-tableeff  %>% ggplot(aes(x=annee,y=value,colour=dip)) + geom_point() +geom_line()
+tableeff  %>% ggplot(aes(x=annee,y=value,colour=dip)) + geom_point() +geom_line() + xlab(label = "Année") + ylab(label = "Individus")
+
 ```
 Nous avons déjà ici la confirmation que nous recherchions. Le taux de non diplômés augmente clairement alors que celui des non-diplomés, chute, celà est expliqué grâce au rythme scolaire augmentant, les jeunes se cultivent permettant a la population d'augmenter significativement
 
 Nous avions au début parlé d'une differenciation entre homme et femme, nous allons donc examiner si les non-diplômés varies entre hommes et femmes
 ```{R}
-tablepays %>% filter(dip=="aucun") %>% ggplot(aes(x=annee,y=value,color=sexe,linetype=age, shape=age)) + geom_line() + geom_point()
+tablepays %>% filter(dip=="aucun") %>% ggplot(aes(x=annee,y=value,color=sexe,linetype=age, shape=age)) + geom_line() + geom_point() + xlab(label = "Année") + ylab(label = "Individus")
+
 ```
 
 On remarque grâce à ce graphique le peu de difference dans la variation de l'éducation entre les genres. On remarque également que la population en général a une tendence a s'éduquer de plus en plus. Logiquement, le nombre de diplomés devrait augmenter, nous allons donc examiner cela :
 Prenons l'examen des gens ayant au moins un BEP
 
-```{R}
-tableF<-select(table,annee,DR15,LIBELLE15,sexe,age,dip,value) %>% filter(sexe=='F')%>%
- group_by(annee,age,dip)
-
-maxF<-sum(tableF$value);
-tableF<-select(tableF,annee,DR15,LIBELLE15,sexe,age,dip,value)%>% mutate(pc=sum(value)/maxF*100)
-temptableF<-select(tableF,annee,age,dip,pc)%>% group_by(annee,age,dip,pc)%>% summarize()
-select(temptableF,annee,age,dip,pc)%>% group_by(annee)%>% summarize(pc=sum(pc))
-```
 
 ```{R}
-tablepays %>% group_by(annee,sexe,age) %>% summarize(value=sum(value)) %>% ggplot(aes(x=annee,y=value,color=sexe,linetype=age, shape=age)) + geom_line() + geom_point()
+tablepays %>% filter(dip!="aucun") %>% group_by(annee,sexe,age) %>% summarize(value=sum(value)) %>% ggplot(aes(x=annee,y=value,color=sexe,linetype=age, shape=age)) + geom_line() + geom_point() + xlab(label = "Année") + ylab(label = "Individus non dîplomé")
 
-```
-
-On remarque contrairement a nos attente au début que les femmes ont largement plus évoluer quand a l'évolution que les hommes. Et on considérant le graph précédent, on peux donc penser que les femmes sont donc en meilleurs évolution d'éducation, même si elle sont initialement sur un pied égalpour les non-diplomés
-
-```{R}
-tablepays %>% filter(dip!="aucun") %>% group_by(annee,sexe,age) %>% summarize(value=sum(value)) %>% ggplot(aes(x=annee,y=value,color=sexe,linetype=age, shape=age)) + geom_line() + geom_point()
 
 
 ```
@@ -103,7 +90,7 @@ maxH<-sum(tableH$value);
 tableH<-select(tableH,annee,DR15,LIBELLE15,sexe,age,dip,value)%>% mutate(pc=sum(value)/maxH*100)
 temptableH<-select(tableH,sexe,annee,age,dip,pc)%>% group_by(sexe,annee,age,dip,pc)%>% summarize()
 tableFinale<-select(temptableH,sexe,annee,age,dip,pc)%>% group_by(sexe,annee,dip)%>% summarize(pc=sum(pc))
-tableFinale %>% filter(dip!="aucun") %>% group_by(annee,sexe) %>% summarize(pc=sum(pc)) %>% ggplot(aes(x=annee,y=pc,color=sexe)) + geom_line() + geom_point()
+tableFinale %>% filter(dip!="aucun") %>% group_by(annee,sexe) %>% summarize(pc=sum(pc)) %>% ggplot(aes(x=annee,y=pc,color=sexe)) + geom_line() + geom_point() + xlab(label = "Année") + ylab(label = "Pourcentage de diplomés")
 
 ```
 
