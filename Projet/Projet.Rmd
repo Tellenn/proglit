@@ -94,4 +94,4 @@ tableFinale %>% filter(dip!="aucun") %>% group_by(annee,sexe) %>% summarize(pc=s
 
 ```
 
-Donc grâce à ce graphique, nous pouvons clairement remettre en cause notre hypothèse comme quoi les femmes étaient moins diplomées, elle l'étaient initialement plus et n'ont fais que creuser l'écard au fil des années.
+Donc grâce à ce graphique, nous pouvons clairement remettre en cause notre hypothèse comme quoi les femmes étaient moins diplomées, elle l'étaient initialement plus et n'ont fais que creuser l'écart au fil des années.
